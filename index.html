@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Secure AI Code Isolator</title>
+    <!-- iframe-resizer for responsive height solution -->
+    <script src="https://cdn.jsdelivr.net/npm/@iframe-resizer/parent@5.4.6"></script>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -171,150 +173,240 @@
         id="ai-code"
         placeholder="Paste any AI-generated HTML/CSS/JavaScript code here..."
       >
-&lt;style&gt;
-body { 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white; 
-    font-family: Arial, sans-serif; 
-    padding: 40px; 
-    text-align: center; 
-    min-height: 100vh;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
 
-.container {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
+<style>
+        body {
+            font-family: Arial, Hebrew, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        button:hover {
+            background-color: #d0d0d0;
+        }
+        button.active {
+            background-color: #2196F3;
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 20px;
+        }
+        .stats {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+</style>
 
-h1 { 
-    font-size: 3em; 
-    margin-bottom: 20px; 
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
+<div class="container">
+    <h1>נתוני רייטינג - רצועות שידור</h1>
+    <div class="buttons">
+        <button onclick="showData('main')" class="active">מהדורה מרכזית</button>
+        <button onclick="showData('prime')">פריים טיים</button>
+        <button onclick="showData('late')">לייט נייט</button>
+    </div>
+    <div class="chart-container">
+        <canvas id="ratingsChart"></canvas>
+    </div>
+    <div class="stats" id="stats"></div>
+</div>
 
-.interactive-btn {
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-    border: none;
-    padding: 15px 30px;
-    color: white;
-    font-size: 18px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.interactive-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-
-.stats {
-    display: flex;
-    justify-content: space-around;
-    margin: 30px 0;
-}
-
-.stat {
-    background: rgba(255,255,255,0.2);
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-}
-
-.number {
-    font-size: 2.5em;
-    font-weight: bold;
-    color: #ffeb3b;
-}
-&lt;/style&gt;
-
-&lt;div class="container"&gt;
-    &lt;h1&gt;🚀 AI Demo Dashboard&lt;/h1&gt;
-    &lt;p&gt;This is completely isolated from the parent page!&lt;/p&gt;
-    
-    &lt;div class="stats"&gt;
-        &lt;div class="stat"&gt;
-            &lt;div class="number" id="counter1"&gt;42&lt;/div&gt;
-            &lt;div&gt;Active Users&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class="stat"&gt;
-            &lt;div class="number" id="counter2"&gt;128&lt;/div&gt;
-            &lt;div&gt;Projects&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class="stat"&gt;
-            &lt;div class="number" id="counter3"&gt;95%&lt;/div&gt;
-            &lt;div&gt;Success Rate&lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    
-    &lt;button class="interactive-btn" onclick="animateCounters()"&gt;🎯 Animate Counters&lt;/button&gt;
-    &lt;button class="interactive-btn" onclick="changeTheme()"&gt;🎨 Change Theme&lt;/button&gt;
-    &lt;button class="interactive-btn" onclick="showAlert()"&gt;⚡ Test Alert&lt;/button&gt;
-&lt;/div&gt;
-
-&lt;script&gt;
-let theme = 0;
-const themes = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-];
-
-function animateCounters() {
-    const counters = ['counter1', 'counter2', 'counter3'];
-    counters.forEach((id, index) => {
-        const element = document.getElementById(id);
-        const targetValue = [Math.floor(Math.random() * 100) + 50, Math.floor(Math.random() * 200) + 100, Math.floor(Math.random() * 20) + 80 + '%'][index];
-        
-        let current = 0;
-        const increment = targetValue.toString().replace('%', '') / 20;
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= targetValue.toString().replace('%', '')) {
-                element.textContent = targetValue;
-                clearInterval(timer);
-            } else {
-                element.textContent = Math.floor(current) + (targetValue.toString().includes('%') ? '%' : '');
+<script>
+        const data = {
+            main: {
+                labels: ['חדשות 12', 'חדשות 14', 'חדשות 13', 'חדשות 11'],
+                viewers: [516, 264, 245, 123],
+                rating: [19.8, 9.5, 7.8, 4.6],
+                shows: ['יונית לוי ודני קושמרו', 'מגי טביבי', 'אודי סגל ודוריה למפל', 'טל ברמן וטלי מורנו']
+            },
+            prime: {
+                labels: ['רוקדים עם כוכבים\n(קשת 12)', 'האח הגדול\n(רשת 13)', 'הפטריוטים\n(ערוץ 14)'],
+                viewers: [493, 414, 320],
+                rating: [18.7, 14.7, 10.6],
+                shows: ['', '', 'ינון מגל עם נתניהו']
+            },
+            late: {
+                labels: ['אברי גלעד ויאיר שרקי\n(קשת 12)', 'הצינור - גיא לרר\n(רשת 13)', 'היום שהיה\n(רשת 13)', 'חדשות הלילה\n(ערוץ 14)', 'חדשות הלילה\n(כאן 11)'],
+                viewers: [261, 229, 148, 95, 77],
+                rating: [10.4, 7.5, 5.4, 3.6, 2.9],
+                shows: ['', '', '', 'יהודה שלזינגר', 'עמרי אסנהיים ורוני קובן']
             }
-        }, 50);
-    });
-}
+        };
 
-function changeTheme() {
-    theme = (theme + 1) % themes.length;
-    document.body.style.background = themes[theme];
-}
+        let chart;
+        const ctx = document.getElementById('ratingsChart').getContext('2d');
 
-function showAlert() {
-    alert('🎉 This alert is completely isolated from the parent page!\\n\\nTry to break out - you can\\'t! 😈');
-}
+        function createChart(dataKey) {
+            const currentData = data[dataKey];
+            
+            if (chart) {
+                chart.destroy();
+            }
 
-// Auto-start animation
-setTimeout(animateCounters, 1000);
-&lt;/script&gt;</textarea
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: currentData.labels,
+                    datasets: [
+                        {
+                            label: 'צופים (אלפים)',
+                            data: currentData.viewers,
+                            backgroundColor: 'rgba(33, 150, 243, 0.7)',
+                            borderColor: 'rgba(33, 150, 243, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y-viewers'
+                        },
+                        {
+                            label: 'נתח צפייה (%)',
+                            data: currentData.rating,
+                            backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            type: 'line',
+                            yAxisID: 'y-rating'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: false
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        'y-viewers': {
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'צופים (אלפים)',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        'y-rating': {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'נתח צפייה (%)',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            max: 25
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 12
+                                },
+                                maxRotation: 0,
+                                autoSkip: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            updateStats(dataKey);
+        }
+
+        function showData(dataKey) {
+            document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            createChart(dataKey);
+        }
+
+        function updateStats(dataKey) {
+            const currentData = data[dataKey];
+            const totalViewers = currentData.viewers.reduce((a, b) => a + b, 0);
+            const avgViewers = Math.round(totalViewers / currentData.viewers.length);
+            const maxViewers = Math.max(...currentData.viewers);
+            const minViewers = Math.min(...currentData.viewers);
+            
+            let statsText = `סה"כ צופים: ${totalViewers} אלף | ממוצע: ${avgViewers} אלף | `;
+            statsText += `הגבוה ביותר: ${maxViewers} אלף | הנמוך ביותר: ${minViewers} אלף`;
+            
+            document.getElementById('stats').textContent = statsText;
+        }
+
+        // Initialize with main news data
+        createChart('main');
+</script></textarea
       >
 
       <div class="controls">
         <button onclick="executeSecurely()">🔒 Execute Securely</button>
+        <button onclick="executeSecurelyResponsive()" class="btn-success">
+          🔒📏 Execute Securely Responsive
+        </button>
         <button onclick="generateEmbedCode()" class="btn-success">
           📋 Generate Embed Code
+        </button>
+        <button
+          onclick="generateResponsiveEmbedCode()"
+          style="background: #17a2b8; color: white"
+        >
+          📋📏 Generate Responsive Embed Code
         </button>
         <button onclick="clearAll()" class="btn-danger">🗑️ Clear All</button>
       </div>
     </div>
 
     <div class="output-section" id="output-section" style="display: none">
-      <h3>🛡️ Secure Execution Result</h3>
+      <h3 id="execution-title">🛡️ Secure Execution Result</h3>
       <div class="status safe" id="security-status">
         ✅ Code executed in secure sandbox - No access to parent page
       </div>
@@ -334,6 +426,10 @@ setTimeout(animateCounters, 1000);
           <li>
             ⚡ <strong>Script execution controlled</strong> - Only within
             sandbox
+          </li>
+          <li id="responsive-feature" style="display: none">
+            📏 <strong>Responsive height</strong> - Automatic content-based
+            sizing
           </li>
         </ul>
       </div>
@@ -521,30 +617,65 @@ setTimeout(animateCounters, 1000);
           >
         </div>
 
-        <div
-          style="
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 10px;
-          "
-        >
-          <strong style="color: #155724">🔧 Algorithm Summary:</strong><br />
-          <span style="color: #155724"
-            >• Input → HTML wrapper → Base64 → Data URI → Sandboxed iframe</span
-          ><br />
-          <span style="color: #155724"
-            >• No content filtering - security comes from sandbox
-            isolation</span
-          ><br />
-          <span style="color: #155724"
-            >• Base64 encoding prevents injection during URI creation</span
-          ><br />
-          <span style="color: #155724"
-            >• Sandbox isolation prevents parent access (including
-            auto-resize)</span
+        <div class="security-features">
+          <h4>🔧 Algorithm Summary:</h4>
+          <br />
+          <div
+            style="
+              background: #f8f9fa;
+              border: 1px solid #dee2e6;
+              padding: 15px;
+              border-radius: 5px;
+              margin: 10px 0;
+            "
           >
+            <strong>🔒 Standard Mode (Fixed Height):</strong><br />
+            <span style="color: #155724"
+              >• Input → HTML wrapper → Base64 → Data URI → Sandboxed
+              iframe</span
+            ><br />
+            <span style="color: #155724"
+              >• No content filtering - security comes from sandbox
+              isolation</span
+            ><br />
+            <span style="color: #155724"
+              >• Base64 encoding prevents injection during URI creation</span
+            ><br />
+            <span style="color: #155724"
+              >• Sandbox isolation prevents parent access (including
+              auto-resize)</span
+            >
+          </div>
+
+          <div
+            style="
+              background: #e8f4fd;
+              border: 1px solid #bee5eb;
+              padding: 15px;
+              border-radius: 5px;
+              margin: 10px 0;
+            "
+          >
+            <strong>📏 Responsive Mode (Auto-Height):</strong><br />
+            <span style="color: #0c5460"
+              >• Same security as standard mode + iframe-resizer
+              integration</span
+            ><br />
+            <span style="color: #0c5460"
+              >• Uses PostMessage API for secure parent-child
+              communication</span
+            ><br />
+            <span style="color: #0c5460"
+              >• Child script measures content height and sends to parent</span
+            ><br />
+            <span style="color: #0c5460"
+              >• Parent script safely resizes iframe without breaking
+              sandbox</span
+            ><br />
+            <span style="color: #0c5460"
+              >• GPLv3 license for open source projects</span
+            >
+          </div>
         </div>
       </div>
 
@@ -593,6 +724,10 @@ setTimeout(animateCounters, 1000);
           <li>
             <strong>✅ Complex Data Visualizations:</strong> Your Chart.js
             Hebrew ratings work perfectly
+          </li>
+          <li>
+            <strong>🆕 Responsive Height:</strong> Auto-sizing with
+            iframe-resizer (responsive mode)
           </li>
         </ul>
       </div>
@@ -675,6 +810,14 @@ setTimeout(animateCounters, 1000);
           <li>
             <strong>❌ Print Functionality:</strong> window.print() only affects
             iframe content
+          </li>
+          <li>
+            <strong>⚠️ Auto-Height (Standard Mode):</strong> Fixed height only -
+            use responsive mode for auto-sizing
+          </li>
+          <li>
+            <strong>📏 Responsive Mode Dependency:</strong> Requires
+            iframe-resizer library for auto-height
           </li>
         </ul>
       </div>
@@ -847,6 +990,7 @@ setTimeout(animateCounters, 1000);
 
     <script>
       let currentEmbedCode = "";
+      let currentIframeResizer = null;
 
       function executeSecurely() {
         const code = document.getElementById("ai-code").value.trim();
@@ -863,60 +1007,93 @@ setTimeout(animateCounters, 1000);
         document.getElementById("embed-section").style.display = "none";
       }
 
-      function createSecureIframe(htmlContent) {
-        // Wrap in complete HTML document
+      function executeSecurelyResponsive() {
+        // Step 3a: Get user input (copy from executeSecurely)
+        const code = document.getElementById("ai-code").value.trim();
+        if (!code) {
+          alert("Please enter some code to execute");
+          return;
+        }
+
+        // Step 3b: The key difference - add responsive parameter
+        createSecureIframe(code, true); // true = responsive mode
+
+        // Step 3c: Update UI to show it's responsive
+        document.getElementById("execution-title").textContent =
+          "🛡️📏 Secure Responsive Execution Result";
+        document.getElementById("responsive-feature").style.display =
+          "list-item";
+        document.getElementById("output-section").style.display = "block";
+        document.getElementById("embed-section").style.display = "none";
+      }
+
+      function createSecureIframe(htmlContent, responsive = false) {
+        // Step 4a: Cleanup previous iframe-resizer (important!)
+        if (currentIframeResizer && currentIframeResizer.length > 0) {
+          try {
+            currentIframeResizer.forEach((iframe) => {
+              if (iframe && iframe.iframeResizer) {
+                iframe.iframeResizer.close();
+              }
+            });
+          } catch (e) {
+            console.log("Cleanup error:", e);
+          }
+          currentIframeResizer = null;
+        }
+
+        // Step 4b: Conditionally add iframe-resizer child script
+        const childScript = responsive
+          ? `\n<${"script"} src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child@5.4.6"></${"script"}>`
+          : "";
+
+        // Step 4c: Build HTML with optional child script
         const fullHTML = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;">
     <title>Secure AI Code Execution</title>
+    ${childScript}
 </head>
 <body style="margin: 0; padding: 0;">
 ${htmlContent}
 </body>
 </html>`;
 
-        // Create secure iframe with sandbox
+        // Step 4d: Create iframe (same as before)
         const iframe = document.getElementById("secure-iframe");
-
-        // Reset iframe
         iframe.src = "about:blank";
-
-        // Set sandbox attributes for maximum security
+        iframe.style.height = responsive ? "100px" : "500px";
         iframe.setAttribute(
           "sandbox",
           "allow-scripts allow-forms allow-popups allow-modals"
         );
 
-        // Use data URI to avoid any external requests
         const dataUri =
           "data:text/html;charset=utf-8," + encodeURIComponent(fullHTML);
         iframe.src = dataUri;
 
-        // Auto-resize functionality
-        iframe.onload = function () {
-          setTimeout(function () {
+        // Step 4e: Setup iframe-resizer ONLY if responsive mode
+        if (responsive && typeof iframeResize === "function") {
+          iframe.onload = function () {
             try {
-              // Try to resize (may fail due to sandbox restrictions, which is good for security)
-              const doc =
-                iframe.contentDocument || iframe.contentWindow.document;
-              if (doc && doc.body) {
-                const height = doc.body.scrollHeight;
-                if (height > 100) {
-                  iframe.style.height = Math.min(height + 20, 800) + "px";
-                }
-              }
-            } catch (e) {
-              // Expected error due to sandbox restrictions - this is good for security
-              console.log(
-                "Auto-resize blocked by sandbox (this is expected and secure)"
+              currentIframeResizer = iframeResize(
+                {
+                  license: "GPLv3",
+                  log: false, // Set to true for debugging if needed
+                  checkOrigin: false,
+                },
+                iframe
               );
-              iframe.style.height = "500px";
+              console.log("✅ iframe-resizer initialized");
+            } catch (e) {
+              console.log("❌ iframe-resizer failed:", e);
+              iframe.style.height = "500px"; // Keep fallback
             }
-          }, 200);
-        };
+          };
+        }
       }
 
       function generateEmbedCode() {
@@ -954,6 +1131,55 @@ ${code}
         document.getElementById("embed-section").style.display = "block";
       }
 
+      function generateResponsiveEmbedCode() {
+        // Step 5a: Input validation (same pattern)
+        const code = document.getElementById("ai-code").value.trim();
+        if (!code) {
+          alert("Please enter some code first");
+          return;
+        }
+        // Step 5b: Build HTML with iframe-resizer child included
+        const fullHTML = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;">
+    <${"script"} src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child@5.4.6"></${"script"}>
+</head>
+<body style="margin: 0;">
+${code}
+</body>
+</html>`;
+
+        // Step 5c: Encode to base64
+        const base64Content = btoa(unescape(encodeURIComponent(fullHTML)));
+
+        // Step 5d: Generate embed code with parent script
+        const embedCode = `<!-- Secure Responsive AI Code Embed -->
+<${"script"} src="https://cdn.jsdelivr.net/npm/@iframe-resizer/parent@5.4.6"></${"script"}>
+<iframe 
+    style="width: 100%; border: 1px solid #ddd; min-height: 100px; border-radius: 5px;" 
+    sandbox="allow-scripts allow-forms allow-popups allow-modals"
+    src="data:text/html;charset=utf-8;base64,${base64Content}"
+    onload="
+        try {
+            iframeResize({
+                license: 'GPLv3',
+                log: false,
+                checkOrigin: false
+            }, this);
+        } catch (e) {
+            this.style.height = '500px';
+        }
+    ">
+</iframe>`;
+
+        // Step 5e: Display the code
+        currentEmbedCode = embedCode;
+        document.getElementById("embed-textarea").value = embedCode;
+        document.getElementById("embed-section").style.display = "block";
+      }
       function copyEmbedCode() {
         const textarea = document.getElementById("embed-textarea");
         if (!textarea.value) return;
@@ -1002,6 +1228,16 @@ ${code}
       }
 
       function clearAll() {
+        if (currentIframeResizer && currentIframeResizer.length > 0) {
+          try {
+            currentIframeResizer.forEach((iframe) => {
+              if (iframe && iframe.iframeResizer) {
+                iframe.iframeResizer.close();
+              }
+            });
+          } catch (e) {}
+          currentIframeResizer = null;
+        }
         document.getElementById("ai-code").value = "";
         document.getElementById("output-section").style.display = "none";
         document.getElementById("embed-section").style.display = "none";
